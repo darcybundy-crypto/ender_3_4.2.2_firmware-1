@@ -13,45 +13,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repository
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Install Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      # 3️⃣ Install Python & PlatformIO
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: Install PlatformIO
-        run: pip install -U platformio
-
-      # 4️⃣ Install marlin_auto_build
-      - name: Install marlin_auto_build
-        run: |
-          git clone https://github.com/zisismaras/marlin_auto_build.git
-          cd marlin_auto_build
-          npm install
-
-      # 5️⃣ Create builds folder inside repo
-      - name: Create output folder
-        run: mkdir -p builds
-
-      # 6️⃣ Run the build
+      # Build Marlin using the prebuilt action
       - name: Build Marlin firmware
-        run: |
-          cd marlin_auto_build
-          node ./lib/runner.js --color --build autoLevel7x7Lin --output ../builds
+        uses: zisismaras/marlin_auto_build@master
+        with:
+          build: autoLevel7x7Lin
+          output: ./builds
 
-      # 7️⃣ Upload build artifacts to GitHub
+      # Upload firmware artifacts
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: marlin-firmware
-          path: builds/
+          path: ./builds/
+
