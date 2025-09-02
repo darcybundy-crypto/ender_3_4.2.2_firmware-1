@@ -1,6 +1,5 @@
 name: marlin_auto_build
 
-# Trigger on changes to firmware source or manually
 on:
   push:
     paths:
@@ -14,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Install Node.js
+      # 2️⃣ Install Node.js (required by marlin_auto_build)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -39,24 +38,19 @@ jobs:
           git clone https://github.com/zisismaras/marlin_auto_build.git
           cd marlin_auto_build
           npm install
+          npx tsc --build   # compile TypeScript into JS
 
-      # 5️⃣ Compile TypeScript
-      - name: Compile marlin_auto_build
-        run: |
-          cd marlin_auto_build
-          npx tsc --build
-
-      # 6️⃣ Create builds folder
+      # 5️⃣ Create builds folder inside workspace
       - name: Create output folder
         run: mkdir -p builds
 
-      # 7️⃣ Run the build
+      # 6️⃣ Run the build
       - name: Build Marlin firmware
         run: |
           cd marlin_auto_build
-          node ./dist/cli.js --color --build autoLevel7x7Lin --output ../builds
+          node ./lib/runner.js --color --build autoLevel7x7Lin --output ../builds
 
-      # 8️⃣ Upload firmware artifacts to GitHub
+      # 7️⃣ Upload build artifacts to GitHub
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
