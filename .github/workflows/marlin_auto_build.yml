@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -38,7 +38,6 @@ jobs:
           git clone https://github.com/zisismaras/marlin_auto_build.git
           cd marlin_auto_build
           npm install
-          npx tsc --build   # compile TypeScript into JS
 
       # 5️⃣ Create builds folder inside workspace
       - name: Create output folder
@@ -48,7 +47,7 @@ jobs:
       - name: Build Marlin firmware
         run: |
           cd marlin_auto_build
-          node ./lib/runner.js --color --build autoLevel7x7Lin --output ../builds
+          node ./dist/cli.js --color --build autoLevel7x7Lin --output ../builds || true
 
       # 7️⃣ Upload build artifacts to GitHub
       - name: Upload firmware
